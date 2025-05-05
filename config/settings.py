@@ -59,6 +59,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'accounts.middleware.LogIPMiddleware',
     # 'accounts.middleware.BlockingMiddleware',
+    'accounts.middleware.BlockingMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
