@@ -1,0 +1,28 @@
+import datetime
+
+from django.http import HttpResponse
+from django.utils import timezone
+
+
+class LogIPMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response  # Keyingi middleware yoki view'ni chaqiradi
+
+    def __call__(self, request):
+        ip = request.META.get('REMOTE_ADDR', 'Noma’lum IP')
+        now = datetime.datetime.now()
+        print(f"[{now}] So‘rov IP: {ip}")  # Terminalga chop etamiz
+        response = self.get_response(request)  # So‘rovni keyingi bosqichga yuboramiz
+        return response
+
+
+class BlockingMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        print(timezone.now().hour)
+        if not 8 < timezone.now().hour < 18:
+            return HttpResponse('Siz bizni Web saytimizdan foydalanishingiz mumkin emas! hozida ish vaqti 8-18 da')
+        response = self.get_response(request)
+        return response
