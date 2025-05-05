@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %} book_detail{% endblock %}
+
+{% block content %}
+    <div class="card" style="width: 18rem;">
+        {% if book.image %}
+            <img src="{{ book.image.url }}"
+                 class="card-img-top" alt="test">
+        {% else %}
+            <img src="https://www.neh.gov/sites/default/files/styles/featured_image_page/public/2018-06/openbooks.jpg?h=b69e0e0e&itok=s8jNjnkU"
+                 class="card-img-top" alt="test">
+        {% endif %}
+        <div class="card-body">
+            <h5 class="card-title">{{ book.name }}</h5>
+            <h5 class="card-title">{{ book.price }}</h5>
+            <p class="card-text">{{ book.descriptions }}</p>
+            {% if book.source %}
+                <a href="{{ book.source.url }}">{{ book.source.name }}</a>
+            {% else %}
+                elektron varianti yoq
+            {% endif %} <br> <br>
+            <a href="{% url 'books_list' %}">
+                <button class="btn btn-primary">back</button>
+            </a>
+
+        </div>
+    </div>
+{% endblock %}

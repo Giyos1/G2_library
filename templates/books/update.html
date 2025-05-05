@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    book_update
+{% endblock %}
+
+{% block content %}
+    <form action="{% url 'book_update' book.id %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {#        <label for="bname">name</label> <br>#}
+        {#        <input type="text" id="bname" name="name" value="{{ book.name }}"> <br>#}
+        {#        <label for="descriptions">descriptions</label> <br>#}
+        {#        <textarea name="descriptions" rows="10" cols="30" id="descriptions">{{ book.descriptions }}</textarea> <br>#}
+        {#        <label for="price">price</label><br>#}
+        {#        <input type="number" id="price" name="price" value="{{ book.price }}"><br> <br>#}
+        <button class="btn btn-primary">submit</button>
+        <a href="{% url 'books_list' %}">
+            <button class="btn btn-primary">back</button>
+        </a></form>
+{% endblock %}

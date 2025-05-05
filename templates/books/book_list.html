@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    book_list
+{% endblock %}
+
+{% block content %}
+    {% if perms.books.add_book %}
+        <a href="{% url 'book_create' %}">
+            <button class="btn btn-primary">create</button>
+        </a>
+    {% endif %}
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">name</th>
+            <th scope="col">description</th>
+            <th scope="col">price</th>
+            <th scope="col">action</th>
+        </tr>
+        </thead>
+        {% for book in books %}
+            <tbody>
+            <tr>
+                <th scope="row">{{ book.id }}</th>
+                <td>{{ book.name }}</td>
+                <td>{{ book.descriptions }}</td>
+                <td>{{ book.price }}</td>
+                <td>
+                    <a href="{% url 'book_detail'  book.id %}">
+                        <button class="btn btn-primary">detail</button>
+                    </a>
+                    {% if perms.books.change_book %}
+
+                        <a href="{% url 'book_update_form'  book.id %}">
+                            <button class="btn btn-warning">update</button>
+                        </a>
+                    {% endif %}
+                    {% if perms.books.delete_book %}
+                        <a href="{% url 'book_delete'  book.id %}">
+                            <button class="btn btn-danger">delete</button>
+                        </a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{#    {% include "pagination.html" with page=books %}#}
+    {% include "pagination.html" with page=page_obj %}
+{% endblock %}

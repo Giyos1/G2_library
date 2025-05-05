@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% for transaction in transactions %}
+        from_account:{{ transaction.from_acc }}
+        to_account:{{ transaction.to_acc }}
+        amount:{{ transaction.amount }}
+        <br><br>
+    {% endfor %}
+
+{% endblock %}

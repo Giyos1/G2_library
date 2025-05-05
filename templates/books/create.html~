@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    book_create
+{% endblock %}
+
+{% block content %}
+{#    <form action="{% url 'book_create_save' %}" method="post" enctype="multipart/form-data">#}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {#        <label for="bname">name</label> <br>#}
+        {#        <input type="text" id="bname" name="name"> <br>#}
+        {#        <label for="descriptions">descriptions</label> <br>#}
+        {#        <textarea name="descriptions" rows="10" cols="30" id="descriptions"></textarea> <br>#}
+        {#        <label for="price">price</label><br>#}
+        {#        <input type="number" id="price" name="price"><br> <br>#}
+        <button class="btn btn-primary">submit</button>
+        <br>
+    </form>
+    <br>
+    <a href="{% url 'books_list' %}">
+        <button class="btn btn-primary">back</button>
+    </a>
+{% endblock %}

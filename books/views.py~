@@ -1,0 +1,186 @@
+from django.contrib.auth.decorators import permission_required
+from django.core.paginator import Paginator
+from django.db.models import Q
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from django.views import View
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
+
+from accounts.utils import login_required, admin_perm
+from books.forms import BookForm
+from books.models import Book, Status
+
+
+class BookListView(ListView):
+    model = Book
+    template_name = 'books/book_list.html'
+    context_object_name = 'books'
+    paginate_by = 2
+
+    # page_kwarg = ''
+    # queryset = Book.objects.filter(status=Status.ACTIVE)
+
+    def get_queryset(self):
+        search = self.request.GET.get('q')
+        if search:
+            return Book.objects.filter(Q(name__icontains=search) | Q(descriptions__icontains=search))
+        return Book.objects.all()
+
+
+class BookDetailView(DetailView):
+    model = Book
+    context_object_name = 'book'
+    template_name = 'books/detail.html'
+
+
+class BookCreateView(CreateView):
+    model = Book
+    template_name = 'books/create.html'
+    form_class = BookForm
+    context_object_name = 'form'
+    success_url = '/books/book_list/'
+
+
+class BookUpdateView(UpdateView):
+    model = Book
+    template_name = 'books/update.html'
+    form_class = BookForm
+    success_url = '/books/book_list/'
+    # permission_required('books.change_book')
+
+
+# class BookListView(View):
+#     def get(self, request):
+#         q = request.GET.get('q', "")
+#         books = Book.objects.all()
+#         if q:
+#             books = books.filter(Q(name__icontains=q) | Q(descriptions__icontains=q))
+#         paginator = Paginator(books, 2)
+#         number = request.GET.get('page', 1)
+#         books = paginator.get_page(number)
+#         return render(request, 'books/book_list.html',
+#                       {'books': books})
+
+
+# class BookCreateView(View):
+#     def get(self, request):
+#         form = BookForm()
+#         return render(request, 'books/create.html', context={'form': form})
+#
+#     def post(self, request):
+#         form = BookForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('books_list')
+#         return render(request, 'books/create.html', context={'form': form})
+#
+
+def books(request):
+    # html_content = """
+    # <!DOCTYPE html>
+    # <html lang="uz">
+    # <head>
+    #     <meta charset="UTF-8">
+    #     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    #     <title>Booklar Dashboard</title>
+    # </head>
+    # <body>
+    #     <h2>Kitoblar Ro'yxati</h2>
+    # </body>
+    # </html>
+    # """
+    # return HttpResponse(html_content)
+    name = request.GET['name']
+
+    return render(request, 'index.html', context={"name": name})
+
+
+@login_required
+def book_list(request):
+    q = request.GET.get('q', "")
+    books = Book.objects.all()
+    if q:
+        books = books.filter(Q(name__icontains=q) | Q(descriptions__icontains=q))
+    paginator = Paginator(books, 2)
+    number = request.GET.get('page', 1)
+    books = paginator.get_page(number)
+    return render(request, 'books/book_list.html', context={'books': books, "q": q})
+
+
+@login_required
+def book_detail(request, id=None):
+    book = Book.objects.get(id=id)
+    return render(request, 'books/detail.html', context={'book': book})
+
+
+@admin_perm
+@login_required
+def book_create(request):
+    form = BookForm()
+    return render(request, 'books/create.html', context={'form': form})
+
+
+@permission_required('books.add_book')
+@login_required
+def book_create_save(request):
+    # 1 - oddiy html form
+    # data = request.POST
+    # Book.objects.create(
+    #     name=data.get('name'),
+    #     descriptions=data.get('descriptions'),
+    #     price=data.get('price')
+    # )
+    # 2-Django oddiy form
+    # form = BookForm(request.POST)
+    # if form.is_valid():
+    #     data = form.cleaned_data
+    #     name = data.get("name")
+    #     descriptions = data.get("descriptions")
+    #     price = data.get("price")
+    #     Book.objects.create(
+    #         name=name,
+    #         descriptions=descriptions,
+    #         price=price
+    #     )
+    #     return redirect('books_list')
+    # return render(request, 'books/create.html', context={'form': form})
+    # 3-django ModelForm
+    form = BookForm(request.POST, files=request.FILES)
+    if form.is_valid():
+        form.save()
+        return redirect('books_list')
+    return render(request, 'books/create.html', context={'form': form})
+
+
+@admin_perm
+@login_required
+def book_update_form(request, id):
+    book = Book.objects.get(id=id)
+    form = BookForm(instance=book)
+    return render(request, 'books/update.html', context={'form': form, 'book': book})
+
+
+@admin_perm
+@login_required
+def book_update(request, id):
+    # data = request.POST
+    # book = Book.objects.get(id=id)
+    # book.name = data.get('name')
+    # book.descriptions = data.get('descriptions')
+    # book.price = data.get('price')
+    # book.save()
+    # return redirect('books_list')
+    data = request.POST
+    book = Book.objects.get(id=id)
+    form = BookForm(data=data, instance=book, files=request.FILES)
+    if form.is_valid():
+        form.save()
+        return redirect('books_list')
+    return render(request, 'books/update.html', context={'form': form, 'book': book})
+
+
+@admin_perm
+@login_required
+def book_delete(request, id):
+    Book.objects.get(id=id).delete()
+    return redirect('books_list')

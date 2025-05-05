@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary">submit</button>
+        <button class="btn btn-success"><a href="{% url 'accounts:forgot_password' %}">
+            Forgot Password
+        </a></button>
+    </form>
+
+{% endblock %}
+
