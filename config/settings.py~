@@ -42,7 +42,6 @@ INSTALLED_APPS = [
 
     # 3 rd apps
     'django_extensions',
-    'rosetta',
 
     # local apps
     'books',

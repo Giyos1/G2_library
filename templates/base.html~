@@ -70,7 +70,7 @@
 
                     <a href={% url 'accounts:register' %}>
                         <button class="d-flex btn btn-primary">
-                             {% trans 'register' %}
+                             {
                         </button>
                     </a>
                 {% endif %}

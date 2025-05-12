@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class BaseQuerySet(models.QuerySet):
@@ -43,6 +44,8 @@ class Author(BaseModel, DeleteModel):
     class Meta:
         db_table = 'authors'
         ordering = ('-birth_date',)
+        verbose_name = _('author')
+        verbose_name_plural = _('authors')
 
 
 class Status(models.TextChoices):
@@ -56,13 +59,14 @@ class BookManager(models.Manager):
 
 
 class Book(BaseModel, DeleteModel):
-    name = models.CharField(max_length=50)
-    descriptions = models.TextField(null=True, blank=True)
-    author = models.ForeignKey(Author, on_delete=models.PROTECT, related_name='book_author', null=True, blank=True)
-    price = models.IntegerField(default=12000)
-    status = models.CharField(max_length=10, choices=Status.choices, default=Status.DRAFT)
-    image = models.ImageField(upload_to='books/', null=True)
-    source = models.FileField(upload_to='books', null=True, blank=True)
+    name = models.CharField(_('name'), max_length=50)
+    descriptions = models.TextField(_('descriptions'), null=True, blank=True)
+    author = models.ForeignKey(Author, verbose_name=_('author'), on_delete=models.PROTECT, related_name='book_author',
+                               null=True, blank=True)
+    price = models.IntegerField(_('price'), default=12000)
+    status = models.CharField(_('status'), max_length=10, choices=Status.choices, default=Status.DRAFT)
+    image = models.ImageField(_('image'), upload_to='books/', null=True)
+    source = models.FileField(_('source'), upload_to='books', null=True, blank=True)
 
     # active = BookManager()
 
