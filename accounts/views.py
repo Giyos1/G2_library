@@ -75,8 +75,8 @@ class ForgotPassword(View):
             )
             send_email_thread(
                 subject='parolni tiklash',
-                message=f'Code:{code.code}'
-                        f'<a href="http://127.0.0.1:8000{reverse('accounts:restore_password')}?username={user.username}" class="button">Link</a>',
+                message=f'Code:{code.code}',
+                #         f'<a href="http://127.0.0.1:8000{reverse('accounts:restore_password')}?username={user.username}" class="button">Link</a>',
                 to_email=user.email
             )
             return render(request, 'accounts/done.html')
